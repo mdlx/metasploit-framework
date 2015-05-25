@@ -1,11 +1,13 @@
 ##
-# This module requires Metasploit: http//metasploit.com/download
+# This module requires Metasploit: http://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 require 'msf/core'
 
 module Metasploit3
+
+  CachedSize = 32
 
   include Msf::Payload::Single
   include Msf::Payload::Linux
@@ -20,8 +22,8 @@ module Metasploit3
          },
       'Author'        =>
         [
-          'Michael Messner <devnull@s3cur1ty.de>', #metasploit payload
-          'rigan - <imrigan@gmail.com>'  #original payload
+          'Michael Messner <devnull[at]s3cur1ty.de>', #metasploit payload
+          'rigan - <imrigan[at]gmail.com>'  #original payload
         ],
       'References'    =>
         [

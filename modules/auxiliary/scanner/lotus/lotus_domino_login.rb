@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http//metasploit.com/download
+# This module requires Metasploit: http://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -54,7 +54,7 @@ class Metasploit3 < Msf::Auxiliary
             :sname => (ssl ? "https" : "http"),
             :user   => user,
             :pass   => pass,
-            :proof  => "WEBAPP=\"Lotus Domino\", VHOST=#{vhost}, COOKIE=#{res.headers['Set-Cookie']}",
+            :proof  => "WEBAPP=\"Lotus Domino\", VHOST=#{vhost}, COOKIE=#{res.get_cookies}",
             :source_type => "user_supplied",
             :active => true
           )

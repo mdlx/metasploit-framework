@@ -6,10 +6,10 @@
 ##
 # General
 ##
-define("TLV_TYPE_HANDLE",              TLV_META_TYPE_UINT    |  600);
+define("TLV_TYPE_HANDLE",              TLV_META_TYPE_QWORD   |  600);
 define("TLV_TYPE_INHERIT",             TLV_META_TYPE_BOOL    |  601);
-define("TLV_TYPE_PROCESS_HANDLE",      TLV_META_TYPE_UINT    |  630);
-define("TLV_TYPE_THREAD_HANDLE",       TLV_META_TYPE_UINT    |  631);
+define("TLV_TYPE_PROCESS_HANDLE",      TLV_META_TYPE_QWORD   |  630);
+define("TLV_TYPE_THREAD_HANDLE",       TLV_META_TYPE_QWORD   |  631);
 
 ##
 # Fs
@@ -19,6 +19,7 @@ define("TLV_TYPE_FILE_NAME",           TLV_META_TYPE_STRING  | 1201);
 define("TLV_TYPE_FILE_PATH",           TLV_META_TYPE_STRING  | 1202);
 define("TLV_TYPE_FILE_MODE",           TLV_META_TYPE_STRING  | 1203);
 define("TLV_TYPE_FILE_SIZE",           TLV_META_TYPE_UINT    | 1204);
+define("TLV_TYPE_FILE_HASH",           TLV_META_TYPE_RAW     | 1206);
 
 define("TLV_TYPE_STAT_BUF",            TLV_META_TYPE_COMPLEX | 1220);
 
@@ -65,7 +66,7 @@ define("PROCESS_EXECUTE_FLAG_SUSPENDED", (1 << 2));
 define("PROCESS_EXECUTE_FLAG_USE_THREAD_TOKEN", (1 << 3));
 
 # Registry
-define("TLV_TYPE_HKEY",                TLV_META_TYPE_UINT    | 1000);
+define("TLV_TYPE_HKEY",                TLV_META_TYPE_QWORD   | 1000);
 define("TLV_TYPE_ROOT_KEY",            TLV_TYPE_HKEY);
 define("TLV_TYPE_BASE_KEY",            TLV_META_TYPE_STRING  | 1001);
 define("TLV_TYPE_PERMISSION",          TLV_META_TYPE_UINT    | 1002);
@@ -90,12 +91,12 @@ define("TLV_TYPE_ENV_GROUP",           TLV_META_TYPE_GROUP   | 1102);
 define("DELETE_KEY_FLAG_RECURSIVE", (1 << 0));
 
 # Process
-define("TLV_TYPE_BASE_ADDRESS",        TLV_META_TYPE_UINT    | 2000);
+define("TLV_TYPE_BASE_ADDRESS",        TLV_META_TYPE_QWORD   | 2000);
 define("TLV_TYPE_ALLOCATION_TYPE",     TLV_META_TYPE_UINT    | 2001);
 define("TLV_TYPE_PROTECTION",          TLV_META_TYPE_UINT    | 2002);
 define("TLV_TYPE_PROCESS_PERMS",       TLV_META_TYPE_UINT    | 2003);
 define("TLV_TYPE_PROCESS_MEMORY",      TLV_META_TYPE_RAW     | 2004);
-define("TLV_TYPE_ALLOC_BASE_ADDRESS",  TLV_META_TYPE_UINT    | 2005);
+define("TLV_TYPE_ALLOC_BASE_ADDRESS",  TLV_META_TYPE_QWORD   | 2005);
 define("TLV_TYPE_MEMORY_STATE",        TLV_META_TYPE_UINT    | 2006);
 define("TLV_TYPE_MEMORY_TYPE",         TLV_META_TYPE_UINT    | 2007);
 define("TLV_TYPE_ALLOC_PROTECTION",    TLV_META_TYPE_UINT    | 2008);
@@ -109,16 +110,16 @@ define("TLV_TYPE_PROCESS_ARGUMENTS",   TLV_META_TYPE_STRING  | 2305);
 define("TLV_TYPE_IMAGE_FILE",          TLV_META_TYPE_STRING  | 2400);
 define("TLV_TYPE_IMAGE_FILE_PATH",     TLV_META_TYPE_STRING  | 2401);
 define("TLV_TYPE_PROCEDURE_NAME",      TLV_META_TYPE_STRING  | 2402);
-define("TLV_TYPE_PROCEDURE_ADDRESS",   TLV_META_TYPE_UINT    | 2403);
-define("TLV_TYPE_IMAGE_BASE",          TLV_META_TYPE_UINT    | 2404);
+define("TLV_TYPE_PROCEDURE_ADDRESS",   TLV_META_TYPE_QWORD   | 2403);
+define("TLV_TYPE_IMAGE_BASE",          TLV_META_TYPE_QWORD   | 2404);
 define("TLV_TYPE_IMAGE_GROUP",         TLV_META_TYPE_GROUP   | 2405);
 define("TLV_TYPE_IMAGE_NAME",          TLV_META_TYPE_STRING  | 2406);
 
 define("TLV_TYPE_THREAD_ID",           TLV_META_TYPE_UINT    | 2500);
 define("TLV_TYPE_THREAD_PERMS",        TLV_META_TYPE_UINT    | 2502);
 define("TLV_TYPE_EXIT_CODE",           TLV_META_TYPE_UINT    | 2510);
-define("TLV_TYPE_ENTRY_POINT",         TLV_META_TYPE_UINT    | 2511);
-define("TLV_TYPE_ENTRY_PARAMETER",     TLV_META_TYPE_UINT    | 2512);
+define("TLV_TYPE_ENTRY_POINT",         TLV_META_TYPE_QWORD   | 2511);
+define("TLV_TYPE_ENTRY_PARAMETER",     TLV_META_TYPE_QWORD   | 2512);
 define("TLV_TYPE_CREATION_FLAGS",      TLV_META_TYPE_UINT    | 2513);
 
 define("TLV_TYPE_REGISTER_NAME",       TLV_META_TYPE_STRING  | 2540);
@@ -137,7 +138,7 @@ define("TLV_TYPE_DESKTOP",             TLV_META_TYPE_STRING  | 3002);
 # Event Log
 ##
 define("TLV_TYPE_EVENT_SOURCENAME",    TLV_META_TYPE_STRING  | 4000);
-define("TLV_TYPE_EVENT_HANDLE",        TLV_META_TYPE_UINT    | 4001);
+define("TLV_TYPE_EVENT_HANDLE",        TLV_META_TYPE_QWORD   | 4001);
 define("TLV_TYPE_EVENT_NUMRECORDS",    TLV_META_TYPE_UINT    | 4002);
 
 define("TLV_TYPE_EVENT_READFLAGS",     TLV_META_TYPE_UINT    | 4003);
@@ -533,8 +534,7 @@ function stdapi_fs_md5($req, &$pkt) {
         $md5 = md5(file_get_contents($path));
     }
     $md5 = pack("H*", $md5);
-    # Ghetto abuse of file name type to indicate the md5 result
-    packet_add_tlv($pkt, create_tlv(TLV_TYPE_FILE_NAME, $md5));
+    packet_add_tlv($pkt, create_tlv(TLV_TYPE_FILE_HASH, $md5));
     return ERROR_SUCCESS;
 }
 }
@@ -552,8 +552,7 @@ function stdapi_fs_sha1($req, &$pkt) {
         $sha1 = sha1(file_get_contents($path));
     }
     $sha1 = pack("H*", $sha1);
-    # Ghetto abuse of file name type to indicate the sha1 result
-    packet_add_tlv($pkt, create_tlv(TLV_TYPE_FILE_NAME, $sha1));
+    packet_add_tlv($pkt, create_tlv(TLV_TYPE_FILE_HASH, $sha1));
     return ERROR_SUCCESS;
 }
 }

@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http//metasploit.com/download
+# This module requires Metasploit: http://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -10,13 +10,15 @@ require 'msf/base/sessions/command_shell_options'
 
 module Metasploit3
 
+  CachedSize = 381
+
   include Msf::Payload::Single
   include Msf::Sessions::CommandShellOptions
 
   def initialize(info = {})
     super(merge_info(info,
       'Name'          => 'Command Shell, Reverse TCP (via python)',
-      'Description'   => 'Creates an interactive shell via python, encodes with base64 by design. Compat with 2.3.3',
+      'Description'   => 'Creates an interactive shell via python, encodes with base64 by design. Compatible with Python 2.3.3',
       'Author'        => 'Ben Campbell', # Based on RageLtMan's reverse_ssl
       'License'       => MSF_LICENSE,
       'Platform'      => 'python',
