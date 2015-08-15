@@ -1,0 +1,3 @@
+#!/bin/sh
+export MSF_DATABASE_CONFIG=config/database.yml
+java -XX:+AggressiveHeap -XX:+UseParallelGC -jar armitage.jar $@
