@@ -198,6 +198,13 @@ module Msf::Post::Common
       end
 
       process.close
+    when /powershell/
+      if args.nil? || args.empty?
+        o = session.shell_command("#{cmd}", time_out)
+      else
+        o = session.shell_command("#{cmd} #{args}", time_out)
+      end
+      o.chomp! if o
     when /shell/
       if args.nil? || args.empty?
         o = session.shell_command_token("#{cmd}", time_out)
@@ -305,11 +312,13 @@ module Msf::Post::Common
     # Special handle some cases that ARCH_TYPES won't recognize.
     # https://msdn.microsoft.com/en-us/library/aa384274.aspx
     case target_arch
-    when /i386/, /i686/
+    when /i[3456]86|wow64/i
       return ARCH_X86
-    when /amd64/i, /ia64/i
+    when /(amd|ia|x)64/i
       return ARCH_X86_64
     end
+
+    # Detect tricky variants of architecture types upfront
 
     # Rely on ARCH_TYPES to tell us a framework-recognizable ARCH.
     # Notice we're sorting ARCH_TYPES first, so that the longest string
